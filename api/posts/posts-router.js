@@ -41,26 +41,27 @@ postsRouter.get('/:id', async (req,res)=>{
 //tests 3 and 4//
 
 //tests 5, 6, and 7//
-postsRouter.post('/', async (req,res)=>{
-    try{
-        const {title, contents} = req.body;
+postsRouter.post('/',(req,res)=>{
+    const {title, contents} = req.body;
 
-        if(!title || !contents){
-            res.status(400).json({
-                message: "Please provide title and contents for the post"
-            })
-        }
-        else{
-            const newPost = await postsFunctions.insert({title, contents})
-            res.status(201).json(newPost)
-        }
-    }
-    catch(err){
-        res.status(500).json({
-            message: "There was an error while saving the post to the database"
+    if(!title || !contents){
+        res.status(400).json({
+            message: "Please provide title and contents for the post"
         })
     }
-})
+    else{
+        postsFunctions.insert({title, contents})
+        .then(({id}) => {
+            return postsFunctions.findById(id)
+        })
+        .then(post =>{
+            res.status(201).json(post)
+        })
+        .catch(err =>{
+            res.status(500).json({
+                message: "There was an error while saving the post to the database"
+        })
+    })}})
 //tests 5, 6, and 7//
 
 //tests 8, 9, 10, and 11//
