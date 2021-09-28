@@ -68,8 +68,9 @@ postsRouter.put('/:id', async (req,res)=>{
     try{
         const id = req.params.id;
         const {title, contents} = req.body;
-    
+        
         const idPost = await postsFunctions.findById(id);
+        
         
         if(!idPost){
             res.status(404).json({
@@ -93,6 +94,31 @@ postsRouter.put('/:id', async (req,res)=>{
     }
 })
 //tests 8, 9, 10, and 11//
+
+//tests 12, 13, and 14//
+postsRouter.delete('/:id', async (req, res)=>{
+    try{
+        const id = req.params.id;
+        const deletedPost = await postsFunctions.remove(id);
+        if(!deletedPost){
+            res.status(404).json({
+                message: "The post with the specified ID does not exist"
+            })
+        }
+        else{
+            res.status(201).json(deletedPost)
+        }
+    }
+    catch(err){
+        res.status(500).json({
+            message: "The post could not be removed"
+        })
+    }
+})
+//tests 12, 13, and 14//
+
+//tests 15 and 16//
+//tests 15 and 16//
 
 
 module.exports = postsRouter;
