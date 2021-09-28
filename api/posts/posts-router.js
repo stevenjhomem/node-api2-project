@@ -72,7 +72,6 @@ postsRouter.put('/:id', async (req,res)=>{
         
         const idPost = await postsFunctions.findById(id);
         
-        
         if(!idPost){
             res.status(404).json({
                 message: "The post with the specified ID does not exist"
@@ -100,14 +99,15 @@ postsRouter.put('/:id', async (req,res)=>{
 postsRouter.delete('/:id', async (req, res)=>{
     try{
         const id = req.params.id;
-        const deletedPost = await postsFunctions.remove(id);
-        if(!deletedPost){
+        const idPost = await postsFunctions.findById(id);
+        if(!idPost){
             res.status(404).json({
                 message: "The post with the specified ID does not exist"
             })
         }
         else{
-            res.status(201).json(deletedPost)
+            await postsFunctions.remove(id)
+            res.status(200).json(idPost)
         }
     }
     catch(err){
