@@ -57,7 +57,7 @@ postsRouter.post('/',(req,res)=>{
         .then(post =>{
             res.status(201).json(post)
         })
-        .catch(err =>{
+        .catch((err) =>{
             res.status(500).json({
                 message: "There was an error while saving the post to the database"
         })
@@ -65,34 +65,46 @@ postsRouter.post('/',(req,res)=>{
 //tests 5, 6, and 7//
 
 //tests 8, 9, 10, and 11//
-postsRouter.put('/:id', async (req,res)=>{
-    try{
-        const id = req.params.id;
+postsRouter.put('/:id',(req,res)=>{
         const {title, contents} = req.body;
-        
-        const idPost = await postsFunctions.findById(id);
-        
-        if(!idPost){
-            res.status(404).json({
-                message: "The post with the specified ID does not exist"
-            })
-        }
-        else if(!title || !contents){
+
+        if(!title || !contents){
             res.status(400).json({
                 message: "Please provide title and contents for the post"
             })
         }
         else{
-            const updatedPost = await postsFunctions.update(id, {title, contents})
-            res.status(200).json(updatedPost)
+            const idPost = postsFunctions.findById(req.params.id)
+            .then(idPost =>{
+                    if(!idPost){
+                        res.status(404).json({
+                            message: "The post with the specified ID does not exist" 
+                        })
+                    }
+                    else{
+                        return postsFunctions.update(req.params.id, {title, contents})
+                    }
+                }
+            )
+            .then(updatedNumbersOfPost =>{
+                if(updatedNumbersOfPost){
+                    return postsFunctions.findById(req.params.id)
+                }
+            })
+            .then(post =>{
+                if(post){
+                    res.json(post)
+                }
+            })
+            .catch( err =>{
+                res.status(500).json({
+                    message: "The post information could not be modified"})
+                })
+            }
         }
-    }
-    catch(err){
-        res.status(500).json({
-            message: "The post information could not be modified"
-        })
-    }
-})
+    )
+        
+        
 //tests 8, 9, 10, and 11//
 
 //tests 12, 13, and 14//
