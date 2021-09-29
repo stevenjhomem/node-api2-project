@@ -1,5 +1,6 @@
 // implement your posts router here
 const express = require('express');
+const { router } = require('../server');
 const postsFunctions = require('./posts-model')
 const postsRouter = express.Router();
 
@@ -131,6 +132,27 @@ postsRouter.delete('/:id', async (req, res)=>{
 //tests 12, 13, and 14//
 
 //tests 15 and 16//
+postsRouter.get('/:id/comments', async (req,res)=>{
+    try{
+        const id = req.params.id;
+        const idPost = await postsFunctions.findById(id);
+        if(!idPost){
+            res.status(404).json({
+                message: "The post with the specified ID does not exist"
+            })
+        }
+        else{
+            const comments = await postsFunctions.findPostComments(id);
+            res.json(comments)
+        }
+
+    }
+    catch (err){
+        res.status(500).json({
+            message: "The comments information could not be retrieved" 
+        })
+    }
+})
 //tests 15 and 16//
 
 
